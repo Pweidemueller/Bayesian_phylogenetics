@@ -1,11 +1,17 @@
 # Examining substitution rates and ancestor dates with BEAST
 
+Practical in the Bayesian inference methods for infectious diseases research workshop at Uni Cambridge.
+
+ This practical was conducted by Christopher Ruis. Material was provided in the OG repo from which this one was forked.
+
 This tutorial requires prior installation of Tracer (downloaded from https://github.com/beast-dev/tracer/releases) and FigTree (downloaded from https://github.com/rambaut/figtree/releases)
 
 In this tutorial, we will analyse the output from BEAST analyses of two pandemic variants of norovirus, a highly prevalent cause of gastroenteritis. We aim to:
 1) Identify the substitution rate of each variant
 2) Compare the substitution rates between variants
 3) Examine ancestor dates to make inferences about the drivers of pandemic spread
+
+In the practical we DIDN'T run BEAST, since that would take to long. We just analysed the output.
 
 ### Loading files into Tracer
 
@@ -23,12 +29,16 @@ The parameters of the model that we can examine within Tracer are shown on the l
 
 ### Checking convergence
 
-The first thing we need to check when we load a log file is whether the MCMC chain has converged. If it hasn't, we can't currently analyse the output as the estimates may not be reliable. We assess convergence by examining the effective sample size (ESS) scores, which are the number of effectively independent draws from the posterior distribution that the Markov chain is equivalent to
+The first thing we need to check when we load a log file is whether the MCMC chain has converged. If it hasn't, we can't currently analyse the output as the estimates may not be reliable. We assess convergence by examining the **effective sample size (ESS)** scores, which are the number of effectively independent draws from the posterior distribution that the Markov chain is equivalent to. Even if we originally ran the BEAST with 2000 samples, some of them will be correlated for some parameters. 
 
-We want the ESS scores to be as large as possible. 200 is usually used as the minimum cutoff. If one or more ESS scores are below 200, we need to run the MCMC chain for longer (or start another independent run and combine). The ESS scores are shown for each parameter on the left hand side
+We want the ESS scores to be as large as possible. **200 is usually used as the minimum cutoff**. If one or more ESS scores are below 200, we need to run the MCMC chain for longer (or start another independent run and combine). The ESS scores are shown for each parameter on the left hand side
 
 ```
 Question 1: Are the ESS scores all over 200? Do they suggest that the run has converged sufficiently to analyse?
+```
+
+```
+Answer 1: Yes all ESS scores are over 200. There is a large spread though. Some are close to 300 and others are 1500.
 ```
 
 ### Examining the substitution rate
@@ -48,10 +58,19 @@ Question 2: What is the mean substitution rate?
 Question 3: What is the confidence interval around this rate? Does this enable us to be certain about the rate?
 ```
 
+```
+Answer 2: 6.5986E-3
+Answer 3: 95% HPD interval: [5.8972E-3, 7.3203E-3], having no idea how large or small rates can be, this HPD interval seems decent
+```
+
 Now click on ucldStdev.norovirus
 
 ```
 Question 4: Does the confidence interval of the ucldStdev overlap 0? Does this support application of a relaxed clock model?
+```
+
+```
+Answer 4: 95% HPD interval: [0.4992, 0.7082] The estimated std is very far from 0, so using a relaxed clock model seems reasonable.
 ```
 
 ### Comparing the substitution rate between datasets
@@ -68,6 +87,10 @@ By clicking on files in the small window in the top left corner, we can choose w
 Question 5: Do the ESS scores suggest that the run has converged sufficiently to analyse?
 ```
 
+```
+Answer 5: Yes!
+```
+
 To compare multiple log files, we need to select them in the top left window. Click on Sydney.log, then hold shift and click on New_Orleans.log. This selects both files. You should see the bottom left window change - the Mean and ESS estimates change to n/a as we have multiple runs selected. Then click ucldMean.norovirus to display summaries of this parameter for both datasets. The window should look like this:
 
 <img src="_figures/tracer_multiple_ucldMean.png" width = "500">
@@ -77,6 +100,11 @@ The right hand windows now show the ucldMean estimates and distributions (now as
 ```
 Question 6: How similar are the substitution rates in terms of their mean and confidence intervals?
 Question 7: What does this suggest about the factors influencing the substitution rate between variants?
+```
+
+```
+Answer 6: The two substitution rates are very similar. 
+Answer 7: It seems that the rates are not influenced by the location?
 ```
 
 ### Examining ancestor dates
@@ -97,6 +125,10 @@ The date of the most recent virus in this dataset is 2016.5
 Question 8: What is the mean date of the most recent common ancestor of the tree?
 Question 9: What is the confidence interval around this date?
 ```
+```
+Answer 8: 2016.5-11.5 = 2005
+Answer 9: 95% HPD interval	[9.1141, 14.5386] -> so in terms of dates [2007.5, 2002]
+```
 
 The Sydney 2012 variant caused a pandemic that started in 2012. What factor was the proximate driver of this pandemic? As the virus was already circulating in humans, there are two previous hypotheses:
 1) The pandemic was driven by a genetic change in the virus that enabled it to spread rapidly (e.g. an immune evasion mutation)
@@ -108,6 +140,9 @@ However, if the pandemic was driven by a change in the human population, the mos
 
 ```
 Question 10: Given the most recent common ancestor date you inferred for Sydney 2012 above, can you infer whether the pandemic was most likely driven by a virus mutation or a change in the human population?
+```
+```
+Answer 10: Looking at the confidence interval even the "shortest" height estimates a date of 2007, which is 5 years before the pandemic occurred, so a change in the human population seems more likely
 ```
 
 ### Examining ancestor dates with FigTree
@@ -139,10 +174,17 @@ Depending on the application, different cutoffs for minimum posterior support ar
 ```
 Question 11: What is the posterior support on the node of interest? Is the node well supported?
 ```
+```
+Answer 11: The node is very well supported with a posterior support of 0.9996 which is very close to 1.
+```
 
 We can now examine the date of the node. Updating the node label "Display" to height shows the number of years between the node and the most recent sequence in the dataset. Again, we calculate the date by subtracting the height from the most recent sequence date (2016.5 in this case). The "height\_95%\_HPD" display shows the confidence interval of the height of the node
 
 ```
 Question 12: What is the most likely date of the node of interest?
 Question 13: What are the confidence intervals of this date?
+```
+```
+Answer 12: 2016.5-7.5 = 2009
+Answer 13: [6.35, 8.96]
 ```
